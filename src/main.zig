@@ -31,14 +31,14 @@ pub fn main() !void {
     defer _ = gpa.deinit();
 
     // open file handle
-    const cwd = fs.cwd();
-    const input_file = try cwd.openFile(input_path, File.OpenFlags{});
+    const cwd: fs.Dir = fs.cwd();
+    const input_file: File = try cwd.openFile(input_path, File.OpenFlags{});
     defer input_file.close();
 
     // read in entire file in memory
-    var reader = input_file.reader();
-    var scanner = Scanner(@TypeOf(reader)).new(reader);
+    const reader = input_file.reader();
+    var scanner = scanner_mod.scanner(reader);
     while (scanner.nextChar()) |char| {
-        stdout.print("char - {c}\n", .{char});
+        try stdout.print("char - {c}\n", .{char});
     }
 }
