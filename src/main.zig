@@ -9,8 +9,6 @@ const File = std.fs.File;
 const Allocator = std.mem.Allocator;
 
 // internal imports
-const scanner_mod = @import("./scanner.zig");
-const Scanner = scanner_mod.Scanner;
 
 pub fn main() !void {
     var args = process.ArgIteratorPosix.init(); // we need access the number of args
@@ -37,8 +35,5 @@ pub fn main() !void {
 
     // read in entire file in memory
     const reader = input_file.reader();
-    var scanner = scanner_mod.scanner(reader);
-    while (scanner.nextChar()) |char| {
-        try stdout.print("char - {c}\n", .{char});
-    }
+    _ = reader;
 }
