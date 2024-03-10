@@ -1,0 +1,4 @@
+# do not include generated lexer file under version control
+# this file might differ drastically
+# based on the settings passed to re2c
+lexer.c
