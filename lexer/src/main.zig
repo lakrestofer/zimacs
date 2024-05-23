@@ -8,12 +8,11 @@ const mem = std.mem;
 const File = std.fs.File;
 const Allocator = std.mem.Allocator;
 
-const lexer_mod = @import("lexer.zig");
+const Lexer = @import("lexer/Lexer.zig");
 
 const MAX_FILE_SIZE: usize = 1 << 24;
 
 // internal imports
-
 pub fn main() !void {
     var args = process.ArgIteratorPosix.init(); // we need access the number of args
     const stdout = std.io.getStdOut().writer();
@@ -45,7 +44,7 @@ pub fn main() !void {
     std.debug.print("input: {s}", .{input});
 
     // build
-    var lexer: lexer_mod.Lexer = lexer_mod.new(input);
+    var lexer: Lexer = Lexer.init(input);
 
     while (lexer.next_token()) |token| {
         try stdout.print("{any}\n", .{token});

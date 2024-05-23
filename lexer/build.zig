@@ -8,7 +8,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // generate lexer
+    // generate c lexer
     const generate_lexer = b.addSystemCommand(&.{"re2c"});
     generate_lexer.addArgs(&.{"--utf8"});
     generate_lexer.addFileArg(.{ .path = "src/lexer/lexer.in.c" });
@@ -17,7 +17,7 @@ pub fn build(b: *std.Build) void {
     const gen_files = b.addWriteFiles();
     gen_files.addCopyFileToSource(generated_lexer_src, "src/lexer/lexer.c");
 
-    // build lexer
+    // build c lexer
     const lexer_lib = b.addStaticLibrary(.{ .name = "tokenizer", .target = target, .optimize = optimize });
     lexer_lib.linkLibC();
     lexer_lib.addCSourceFiles(.{ .files = &.{"src/lexer/lexer.c"}, .flags = &.{ "-pedantic", "-Wall" } });
@@ -25,6 +25,19 @@ pub fn build(b: *std.Build) void {
     lexer_lib.step.dependOn(&gen_files.step);
     b.installArtifact(lexer_lib);
 
+    // build library
+    const lib = b.addStaticLibrary(.{
+        .name = "lexer",
+        // In this case the main source file is merely a path, however, in more
+        // complicated build scripts, this could be a generated file.
+        .root_source_file = b.path("src/root.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    lib.linkLibC();
+    lib.linkLibrary(lexer_lib);
+    lib.addIncludePath(.{ .path = "src/lexer" });
+    b.installArtifact(lib);
     // build exe
     const exe = b.addExecutable(.{
         .name = "zimacs",
@@ -39,16 +52,15 @@ pub fn build(b: *std.Build) void {
 
     // build tests
     const unit_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/main.zig" },
+        .root_source_file = .{ .path = "src/root.zig" },
         .target = target,
         .optimize = optimize,
     });
     unit_tests.addIncludePath(.{ .path = "src/lexer/" });
     unit_tests.linkLibrary(lexer_lib);
 
-    const run_unit_tests = b.addRunArtifact(unit_tests);
-
     // run command
+    const run_unit_tests_cmd = b.addRunArtifact(unit_tests);
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
@@ -60,5 +72,5 @@ pub fn build(b: *std.Build) void {
     run_step.dependOn(&run_cmd.step);
 
     const test_step = b.step("test", "Run unit tests");
-    test_step.dependOn(&run_unit_tests.step);
+    test_step.dependOn(&run_unit_tests_cmd.step);
 }
