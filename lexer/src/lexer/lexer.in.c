@@ -23,10 +23,12 @@ TokenKind next_token(const char **token_begin, const char** token_end) {
      identifier = [a-zA-Z_/+-*]+;
      comment = [ ]*";"[^\n]*"\n";
      whitespace = [" "\n\r\t];
+     string = "\""[^"]*"\"";
 
      // rule definitions
      l_paren { token = L_PAREN; break; }
      r_paren { token = R_PAREN; break; }
+     string { token = STRING; break; }
      identifier { token = IDENTIFIER; break;}
      comment { 
        begin = cursor;

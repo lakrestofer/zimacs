@@ -27,6 +27,10 @@ test "comment" {
     try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 20, .end = 21 } }, l.next_token().?);
     try std.testing.expectEqual(Token{ .kind = cmod.R_PAREN, .location = .{ .start = 21, .end = 22 } }, l.next_token().?);
 }
+test "string" {
+    var l = Lexer.init("\"this is a string\"");
+    try std.testing.expectEqual(Token{ .kind = cmod.STRING, .location = .{ .start = 0, .end = 18 } }, l.next_token().?);
+}
 
 test "small input" {
     const input = "(add one two)";
