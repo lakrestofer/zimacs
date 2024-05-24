@@ -2,13 +2,13 @@
 const std = @import("std");
 // internal imports
 pub const Token = @import("Token.zig");
-pub const c = @import("clexer.zig");
+pub const cmod = @import("clexer.zig");
 
 // === fields begin ===
 // struct Lexer {
 buffer: [:0]const u8,
-cursor: *const u8,
-position: usize = 0,
+beginning: *const u8, // first element in the buffer
+cursor: *const u8, // current element in the buffer
 eof_reached: bool = false,
 // }
 // === fields end ===
@@ -21,18 +21,23 @@ pub fn next_token(self: *Self) ?Token {
         return null;
     }
 
-    var token_kind: Token.TokenKind = c.INVALID;
+    var token_kind: Token.TokenKind = cmod.INVALID;
 
-    token_kind = c.next_token(@ptrCast(&self.cursor));
+    var token_begin = self.cursor;
+    var token_end = self.cursor;
+    token_kind = cmod.next_token(@ptrCast(&token_begin), @ptrCast(&token_end));
+    const start: usize = @intFromPtr(token_begin) - @intFromPtr(self.beginning);
+    const end: usize = @intFromPtr(token_end) - @intFromPtr(self.beginning);
+    self.cursor = token_end;
 
-    if (token_kind == c.EOF) {
+    if (token_kind == cmod.EOF) {
         self.eof_reached = true;
     }
 
-    return Token{ .kind = token_kind, .location = .{ .start = 0, .end = 0 } };
+    return Token{ .kind = token_kind, .location = .{ .start = start, .end = end } };
 }
 
 pub fn init(buffer: [:0]const u8) Self {
-    return Self{ .buffer = buffer, .cursor = &buffer[0] };
+    return Self{ .buffer = buffer, .cursor = &buffer[0], .beginning = &buffer[0] };
 }
 // === methods begin ===

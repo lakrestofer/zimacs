@@ -38,9 +38,10 @@ pub fn build(b: *std.Build) void {
     lib.linkLibrary(lexer_lib);
     lib.addIncludePath(.{ .path = "src/lexer" });
     b.installArtifact(lib);
+
     // build exe
     const exe = b.addExecutable(.{
-        .name = "zimacs",
+        .name = "zimacs-lexer",
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
         .optimize = optimize,

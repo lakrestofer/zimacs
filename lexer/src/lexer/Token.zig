@@ -1,10 +1,10 @@
 // std lib imports
 const std = @import("std");
 // internal imports
-const lexer_c = @import("clexer.zig");
+const c = @import("clexer.zig");
 
 // exported type definitions
-pub const TokenKind = lexer_c.TokenKind;
+pub const TokenKind = c.TokenKind;
 pub const Location = struct {
     start: usize,
     end: usize,
@@ -22,11 +22,11 @@ const Self = @This();
 // === methods begin ===
 pub fn format_kind(self: Self) []const u8 {
     return switch (self.kind) {
-        lexer_c.INVALID => "INVALID",
-        lexer_c.EOF => "EOF",
-        lexer_c.IDENTIFIER => "IDENTIFIER",
-        lexer_c.L_PAREN => "L_PAREN",
-        lexer_c.R_PAREN => "R_PAREN",
+        c.INVALID => "INVALID",
+        c.EOF => "EOF",
+        c.IDENTIFIER => "IDENTIFIER",
+        c.L_PAREN => "L_PAREN",
+        c.R_PAREN => "R_PAREN",
         else => "WHAT_THE_ACTUAL_FUCK_HAVE_YOU_DONE_THIS_SHOULD_BE_IMPOSSIBLE",
     };
 }

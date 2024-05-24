@@ -8,15 +8,16 @@
   re2c:define:YYMARKER = marker;
 */
 
-TokenKind next_token(const char **tokenizer_cursor) {
-  const char *cursor = *tokenizer_cursor;
+TokenKind next_token(const char **token_begin, const char** token_end) {
+  const char *begin = *token_begin; // pointer to the beginning of the token
+  const char *cursor = *token_end; // pointer to the end of the token
   char *marker = (char*) cursor;
   TokenKind token = INVALID;
 
   for (;;) {
   /*!re2c
-
      // pattern definitions
+     nul = "\000";
      l_paren = "(";
      r_paren = ")";
      identifier = [a-zA-Z_/+-*]+;
@@ -27,12 +28,20 @@ TokenKind next_token(const char **tokenizer_cursor) {
      l_paren { token = L_PAREN; break; }
      r_paren { token = R_PAREN; break; }
      identifier { token = IDENTIFIER; break;}
-     comment { continue; }
-     whitespace { continue; }
-     * { token = EOF; break;}
+     comment { 
+       begin = cursor;
+       continue; 
+     }
+     whitespace { 
+       begin = cursor;
+       continue; 
+      }
+     nul { token = EOF; break; }
+     * { token = INVALID; break; }
    */
   }
-  *tokenizer_cursor = cursor;
+  *token_begin = begin;
+  *token_end= cursor;
   return token;
 }
 

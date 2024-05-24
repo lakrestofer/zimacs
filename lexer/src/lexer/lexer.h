@@ -1,6 +1,8 @@
 #ifndef LEXER_H_INCLUDED
 #define LEXER_H_INCLUDED
 
+#include <stddef.h>
+
 typedef enum TokenKind_e {
   INVALID,
   EOF,
@@ -9,6 +11,8 @@ typedef enum TokenKind_e {
   R_PAREN,
 } TokenKind;
 
-TokenKind next_token(const char** tokenizer_cursor);
+/// takes a pointer to the cursor pointer (such such that it can update it)
+/// and a pointer
+TokenKind next_token(const char **token_begin, const char** token_end);
 
 #endif // LEXER_H_INCLUDED
