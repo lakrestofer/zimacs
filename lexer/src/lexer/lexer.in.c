@@ -45,3 +45,12 @@ TokenKind next_token(const char **token_begin, const char** token_end) {
   return token;
 }
 
+#define TOKEN_ENUM_SLICE(NAME) case NAME: {s.ptr = #NAME; s.len = sizeof(#NAME) - 1; break; };
+
+Slice format_kind(TokenKind kind) {
+  Slice s;
+  switch (kind) {
+    TOKEN_ENUM(TOKEN_ENUM_SLICE)
+  }
+  return s;
+}

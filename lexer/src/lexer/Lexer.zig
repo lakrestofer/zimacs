@@ -25,6 +25,7 @@ pub fn next_token(self: *Self) ?Token {
 
     var token_begin = self.cursor;
     var token_end = self.cursor;
+    // call into the state machine
     token_kind = cmod.next_token(@ptrCast(&token_begin), @ptrCast(&token_end));
     const start: usize = @intFromPtr(token_begin) - @intFromPtr(self.beginning);
     const end: usize = @intFromPtr(token_end) - @intFromPtr(self.beginning);
@@ -40,4 +41,4 @@ pub fn next_token(self: *Self) ?Token {
 pub fn init(buffer: [:0]const u8) Self {
     return Self{ .buffer = buffer, .cursor = &buffer[0], .beginning = &buffer[0] };
 }
-// === methods begin ===
+// === methods end ===
