@@ -10,9 +10,23 @@ test {
     _ = @import("lexer/Token.zig");
 }
 
-// test "(" {
-//     try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 0, .end = 1 } }, *(&Lexer.init("(")).next_token().?);
-// }
+test "(" {
+    var l = Lexer.init("(");
+    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 0, .end = 1 } }, l.next_token().?);
+}
+test ")" {
+    var l = Lexer.init(")");
+    try std.testing.expectEqual(Token{ .kind = cmod.R_PAREN, .location = .{ .start = 0, .end = 1 } }, l.next_token().?);
+}
+test "whitespace" {
+    var l = Lexer.init(" (   ");
+    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 1, .end = 2 } }, l.next_token().?);
+}
+test "comment" {
+    var l = Lexer.init("; this is a comment\n()");
+    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 20, .end = 21 } }, l.next_token().?);
+    try std.testing.expectEqual(Token{ .kind = cmod.R_PAREN, .location = .{ .start = 21, .end = 22 } }, l.next_token().?);
+}
 
 test "small input" {
     const input = "(add one two)";
