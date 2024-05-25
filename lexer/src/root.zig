@@ -10,26 +10,30 @@ test {
     _ = @import("lexer/Token.zig");
 }
 
-test "(" {
-    var l = Lexer.init("(");
-    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 0, .end = 1 } }, l.next_token().?);
+fn testLexer(tokens: []const Token, input: [:0]const u8) !void {
+    var l = Lexer.init(input);
+    for (tokens) |token| try std.testing.expectEqual(token, l.next_token().?);
 }
-test ")" {
-    var l = Lexer.init(")");
-    try std.testing.expectEqual(Token{ .kind = cmod.R_PAREN, .location = .{ .start = 0, .end = 1 } }, l.next_token().?);
+
+test "parens" {
+    try testLexer(&([_]Token{Token.init(cmod.L_PAREN, 0, 1)}), @ptrCast("("));
+    try testLexer(&([_]Token{Token.init(cmod.R_PAREN, 0, 1)}), @ptrCast(")"));
+    try testLexer(&([_]Token{Token.init(cmod.L_VEC_PAREN, 0, 2)}), @ptrCast("#("));
 }
-test "whitespace" {
-    var l = Lexer.init(" (   ");
-    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 1, .end = 2 } }, l.next_token().?);
+
+test "skipped tokens" {
+    try testLexer(&([_]Token{Token.init(cmod.L_PAREN, 1, 2)}), @ptrCast(" (   "));
+    try testLexer(
+        &([_]Token{
+            Token.init(cmod.L_PAREN, 20, 21),
+            Token.init(cmod.R_PAREN, 21, 22),
+        }),
+        @ptrCast("; this is a comment\n()"),
+    );
 }
-test "comment" {
-    var l = Lexer.init("; this is a comment\n()");
-    try std.testing.expectEqual(Token{ .kind = cmod.L_PAREN, .location = .{ .start = 20, .end = 21 } }, l.next_token().?);
-    try std.testing.expectEqual(Token{ .kind = cmod.R_PAREN, .location = .{ .start = 21, .end = 22 } }, l.next_token().?);
-}
-test "string" {
-    var l = Lexer.init("\"this is a string\"");
-    try std.testing.expectEqual(Token{ .kind = cmod.STRING, .location = .{ .start = 0, .end = 18 } }, l.next_token().?);
+
+test "litterals" {
+    try testLexer(&([_]Token{Token.init(cmod.STRING, 0, 18)}), @ptrCast("\"this is a string\""));
 }
 
 test "small input" {

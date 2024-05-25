@@ -4,17 +4,24 @@
 #include <stddef.h>
 
 // https://kubyshkin.name/posts/c-language-enums-tips-and-tricks/
-#define TOKEN_ENUM(VARIANT)\
+// litterals that are values
+#define LITTERAL_TOKEN(VARIANT)\
+  VARIANT(STRING) \
+  VARIANT(BOOLEAN)
+
+
+#define TOKENS(VARIANT)\
   VARIANT(INVALID) \
   VARIANT(EOF) \
   VARIANT(IDENTIFIER) \
   VARIANT(L_PAREN) \
   VARIANT(R_PAREN) \
-  VARIANT(STRING)
+  VARIANT(L_VEC_PAREN) \
+  LITTERAL_TOKEN(VARIANT)
 
 #define TOKEN_ENUM_VARIANT(NAME) NAME,
 typedef enum {
-  TOKEN_ENUM(TOKEN_ENUM_VARIANT)
+  TOKENS(TOKEN_ENUM_VARIANT)
 } TokenKind;
 
 /// takes a pointer to the cursor pointer (such such that it can update it)

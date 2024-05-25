@@ -20,15 +20,19 @@ TokenKind next_token(const char **token_begin, const char** token_end) {
      nul = "\000";
      l_paren = "(";
      r_paren = ")";
+     l_vec_paren = "#(";
      identifier = [a-zA-Z_/+-*]+;
      comment = [ ]*";"[^\n]*"\n";
      whitespace = [" "\n\r\t];
      string = "\""[^"]*"\"";
+     boolean = "#t"|"#f"|"#true"|"#false";
 
      // rule definitions
      l_paren { token = L_PAREN; break; }
      r_paren { token = R_PAREN; break; }
+     l_vec_paren { token = L_VEC_PAREN; break; }
      string { token = STRING; break; }
+     boolean { token = BOOLEAN ; break; }
      identifier { token = IDENTIFIER; break;}
      comment { 
        begin = cursor;
@@ -47,12 +51,13 @@ TokenKind next_token(const char **token_begin, const char** token_end) {
   return token;
 }
 
+// macro that takes a enum, and creates a struct containing a c-string and its length
 #define TOKEN_ENUM_SLICE(NAME) case NAME: {s.ptr = #NAME; s.len = sizeof(#NAME) - 1; break; };
 
 Slice format_kind(TokenKind kind) {
   Slice s;
   switch (kind) {
-    TOKEN_ENUM(TOKEN_ENUM_SLICE)
+    TOKENS(TOKEN_ENUM_SLICE)
   }
   return s;
 }
