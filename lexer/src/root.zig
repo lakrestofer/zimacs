@@ -8,32 +8,7 @@ pub const cmod = Lexer.cmod;
 
 test {
     _ = @import("lexer/Token.zig");
-}
-
-fn testLexer(tokens: []const Token, input: [:0]const u8) !void {
-    var l = Lexer.init(input);
-    for (tokens) |token| try std.testing.expectEqual(token, l.next_token().?);
-}
-
-test "parens" {
-    try testLexer(&([_]Token{Token.init(cmod.L_PAREN, 0, 1)}), @ptrCast("("));
-    try testLexer(&([_]Token{Token.init(cmod.R_PAREN, 0, 1)}), @ptrCast(")"));
-    try testLexer(&([_]Token{Token.init(cmod.L_VEC_PAREN, 0, 2)}), @ptrCast("#("));
-}
-
-test "skipped tokens" {
-    try testLexer(&([_]Token{Token.init(cmod.L_PAREN, 1, 2)}), @ptrCast(" (   "));
-    try testLexer(
-        &([_]Token{
-            Token.init(cmod.L_PAREN, 20, 21),
-            Token.init(cmod.R_PAREN, 21, 22),
-        }),
-        @ptrCast("; this is a comment\n()"),
-    );
-}
-
-test "litterals" {
-    try testLexer(&([_]Token{Token.init(cmod.STRING, 0, 18)}), @ptrCast("\"this is a string\""));
+    _ = @import("./testing/tests.zig");
 }
 
 test "small input" {

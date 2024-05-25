@@ -48,5 +48,7 @@ test "format enum variant" {
     try std.testing.expectEqualSlices(u8, "EOF", Self.init(c.EOF, 0, 0).format_kind());
     try std.testing.expectEqualSlices(u8, "IDENTIFIER", Self.init(c.IDENTIFIER, 0, 0).format_kind());
     try std.testing.expectEqualSlices(u8, "L_PAREN", Self.init(c.L_PAREN, 0, 0).format_kind());
+    try std.testing.expectEqualSlices(u8, "L_VEC_PAREN", Self.init(c.L_VEC_PAREN, 0, 0).format_kind());
+    try std.testing.expectEqualSlices(u8, "L_BYTE_VEC_PAREN", Self.init(c.L_BYTE_VEC_PAREN, 0, 0).format_kind());
     try std.testing.expectEqualSlices(u8, "R_PAREN", Self.init(c.R_PAREN, 0, 0).format_kind());
 }
